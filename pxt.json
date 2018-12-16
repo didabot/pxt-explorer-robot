@@ -1,21 +1,21 @@
 {
-    "name": "maqueen",
+    "name": "explorer",
     "version": "0.0.1",
-    "description": "Tinkercademy package for ElecFreaks maqueen receiver module",
+    "description": "Package for ttrobotics explorer robot starter kit",
     "license": "MIT",
     "dependencies": {
         "core": "*"
     },
     "files": [
-        "maqueen.ts",
+        "explorer.ts",
         "enums.d.ts",
-        "maqueenIR.cpp",
+        "explorerIR.cpp",
         "ReceiverIR.cpp",
         "ReceiverIR.h",
         "RemoteIR.h",
         "TransmitterIR.cpp",
         "TransmitterIR.h",
-        "_locales/zh/maqueen-strings.json"
+        "_locales/zh/explorer-strings.json"
     ],
     "testFiles": [
         "tests.ts"
