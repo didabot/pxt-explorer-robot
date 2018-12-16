@@ -1,7 +1,7 @@
-let maqueencb: Action
-let maqueenmycb: Action
-let maqueene        = "1"
-let maqueenparam    = 0
+let explorercb: Action
+let explorermycb: Action
+let explorere        = "1"
+let explorerparam    = 0
 let alreadyInit=0
 let IrPressEvent=0
 const MOTER_ADDRESSS = 0x10
@@ -14,8 +14,8 @@ MicroSeconds
 }
 
 
-//% weight=10 color=#008B00 icon="\uf136" block="maqueen"
-namespace maqueen{
+//% weight=10 color=#008B00 icon="\uf136" block="explorer"
+namespace explorer{
   
     export class Packeta {
         public mye: string;
@@ -57,20 +57,20 @@ namespace maqueen{
         turnOff=0x00
     }
 
-    //% advanced=true shim=maqueenIR::initIR
+    //% advanced=true shim=explorerIR::initIR
     function initIR(pin: Pins):void{
         return
     }
-    //% advanced=true shim=maqueenIR::onPressEvent
+    //% advanced=true shim=explorerIR::onPressEvent
     function onPressEvent(btn: RemoteButton,body: Action):void{
         return
     }
-    //% advanced=true shim=maqueenIR::getParam
+    //% advanced=true shim=explorerIR::getParam
     function getParam():number {
         return 0
     }
     
-    function maqueenInit():void{
+    function explorerInit():void{
         if(alreadyInit==1){
             return
         }
@@ -84,29 +84,29 @@ namespace maqueen{
     //% mutateText=Packeta
     //% mutateDefaults="myparam:message"
     //% blockId=IR_callbackUser block="on obloq received"
-    export function IR_callbackUser(maqueencb: (packet: Packeta) => void) {
-        maqueenInit()
+    export function IR_callbackUser(explorercb: (packet: Packeta) => void) {
+        explorerInit()
         IR_callback(() => {
             const packet = new Packeta();
-            packet.mye = maqueene;
-            maqueenparam=getParam();
-            packet.myparam = maqueenparam;
-            maqueencb(packet)
+            packet.mye = explorere;
+            explorerparam=getParam();
+            packet.myparam = explorerparam;
+            explorercb(packet)
         });
     }
     
     //% weight=10
     //% blockId=IR_read block="read IR"
     export function IR_read():number{
-        maqueenInit()
+        explorerInit()
         return getParam()
     }
     
    
     function IR_callback(a: Action): void{
-        maqueencb=a
+        explorercb=a
         IrPressEvent+=1
-        onPressEvent(IrPressEvent,maqueencb)
+        onPressEvent(IrPressEvent,explorercb)
     }
     
     //% blockId=ultrasonic_sensor block="sensor unit|%unit"
