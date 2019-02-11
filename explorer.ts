@@ -113,7 +113,7 @@ namespace explorer {
     //% weight=95
     export function sensor(unit: PingUnit, maxCmDistance = 500): number {
         // send pulse
-        pins.setPull(DigitalPin.P1, PinPullMode.PullNone);
+        pins.setPull(DigitalPin.P1, PinPullMode.PullUp);
         pins.digitalWritePin(DigitalPin.P1, 0);
         control.waitMicros(2);
         pins.digitalWritePin(DigitalPin.P1, 1);
