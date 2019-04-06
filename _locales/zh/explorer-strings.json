@@ -14,6 +14,7 @@
     "explorer.MotorRun|block": "电机|%index|方向|%Dir|速度|%speed",
     "explorer.IR_callbackUser|block": "当接收到红外时运行",
     "explorer.sensor|block": "超声波距离|%unit",
+    "explorer.sensorMove|block": "超声波角度|%angle",   
     "explorer.readPatrol|block": "巡线传感器|%patrol",
     "explorer.writeLED|block": "LED灯|%led,|%ledswitch",
     "explorer.IR_read|block": "红外的值"
