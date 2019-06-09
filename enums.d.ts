@@ -24,28 +24,25 @@
     }
 
 
-    declare const enum RemoteButton {
-    Power = 0x00,
-    VolUp = 0x01,
-    FuncStop = 0x02,
-    LeftTwo = 0x04,
-    Suspended = 0x05,
-    RightTwo = 0x06,
-    Down = 0x08,
-    VolDown = 0x09,
-    Up = 0x0a,
-    Zero = 0x0c,
-    EQ = 0x0d,
-    StRept = 0x0e,
-    One = 0x10,
-    Two = 0x11,
-    Three = 0x12,
-    Four = 0x14,
-    Five = 0x15,
-    Six = 0x16,
-    Seven = 0x18,
-    Eight = 0x19,
-    Nine = 0x1a,
+    declare const enum RemoteButton
+    {
+    One = 69,
+    Two = 70,
+    Three = 71,
+    Four = 68,
+    Five = 64,
+    Six = 67,
+    Seven = 7,
+    Eight = 21,
+    Nine = 9,
+    Zero = 25,
+    Asterisk = 22,
+    Sharp = 13,
+    Up = 24,
+    Down = 82,
+    Left = 8,
+    Right = 90,
+    Ok = 28,
     }
 declare namespace explorerIR {
 }

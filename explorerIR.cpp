@@ -29,28 +29,25 @@ enum class Pins{
   P20= 30
 };
 
-enum class RemoteButton {
-  Power = 0x00,
-  VolUp = 0x01,
-  FuncStop = 0x02,
-  LeftTwo = 0x04,
-  Suspended = 0x05,
-  RightTwo = 0x06,
-  Down = 0x08,
-  VolDown = 0x09,
-  Up = 0x0a,
-  Zero = 0x0c,
-  EQ = 0x0d,
-  StRept = 0x0e,
-  One = 0x10,
-  Two = 0x11,
-  Three = 0x12,
-  Four = 0x14,
-  Five = 0x15,
-  Six = 0x16,
-  Seven = 0x18,
-  Eight = 0x19,
-  Nine = 0x1a
+enum class RemoteButton
+{
+  One = 69,
+  Two = 70,
+  Three = 71,
+  Four = 68,
+  Five = 64,
+  Six = 67,
+  Seven = 7,
+  Eight = 21,
+  Nine = 9,
+  Zero = 25,
+  Asterisk = 22,
+  Sharp = 13,
+  Up = 24,
+  Down = 82,
+  Left = 8,
+  Right = 90,
+  Ok = 28
 };
 
 //% color=50 weight=80
@@ -72,8 +69,10 @@ namespace explorerIR {
   //% blockId=ir_received_left_event
   //% block="on |%btn| button pressed"
   void onPressEvent(RemoteButton btn, Action body) {
-    //if(actions.find(btn) == actions.end()) actions[btn] = new vector();
-    IRcallbackNum=(int)btn;
+    if(actions.find(btn) == actions.end()) {
+        vector<Action> act;
+        actions[btn] = act;
+    } 
     actions[btn].push_back(body);
   }
 
@@ -81,7 +80,7 @@ namespace explorerIR {
 
   void onReceivable(){
     int x = rx->getData(&fmt, buf, 32 * 8);
-    /*
+/*    
     uBit.serial.send(".");
     uBit.serial.send(buf[0]);
     uBit.serial.send(".");
@@ -155,19 +154,14 @@ namespace explorerIR {
     uBit.serial.send(".");
     uBit.serial.send(buf[35]);
     uBit.serial.send(".end");
-    */
-    //if(actions.find((RemoteButton)buf[2]) == actions.end()) return;
+*/
+    if(actions.find((RemoteButton)buf[2]) == actions.end()) 
+        return;
     now = tsb.read_ms();
     if(now - lastact[(RemoteButton)buf[2]] < 100) return;
     lastact[(RemoteButton)buf[2]] = now;
     msg=(int)buf[2];
-    uBit.serial.send(IRcallbackNum);
-    if(IRcallbackNum < 1){
-      return;
-    }
-    for(int i=1;i<=IRcallbackNum;i++){
-      cA(actions[(RemoteButton)i]);  
-    }    
+    cA(actions[(RemoteButton)msg]);  
   }
 
   void monitorIR(){

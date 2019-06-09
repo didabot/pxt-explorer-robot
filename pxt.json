@@ -1,10 +1,12 @@
 {
     "name": "explorer",
     "version": "0.0.1",
-    "description": "Package for ttrobotics explorer robot starter kit",
+    "description": "MakeCode Extension Explorer Robot Start Kit",
     "license": "MIT",
     "dependencies": {
-        "core": "*"
+        "core": "*",
+        "neopixel": "github:microsoft/pxt-neopixel#v0.6.12",
+        "ws2812b": "github:microsoft/pxt-ws2812b#v0.0.4"
     },
     "files": [
         "shims.d.ts",
@@ -21,5 +23,6 @@
     "testFiles": [
         "tests.ts"
     ],
-    "public": true
+    "public": true,
+    "installedVersion": "workspace:7152e5cd-1351-420a-f291-6d46ce866b8b"
 }
