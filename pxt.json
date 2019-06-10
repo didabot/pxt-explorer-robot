@@ -6,7 +6,6 @@
     "dependencies": {
         "core": "*",
         "neopixel": "github:microsoft/pxt-neopixel#v0.6.12",
-        "ws2812b": "github:microsoft/pxt-ws2812b#v0.0.4"
     },
     "files": [
         "shims.d.ts",
