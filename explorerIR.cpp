@@ -1,11 +1,10 @@
-#include "pxt.h"
 #include <map>
 #include <vector>
+#include "pxt.h"
 #include "ReceiverIR.h"
+
 using namespace pxt;
 typedef vector<Action> vA;
-
-
 
 enum class Pins{
   P0=  3,
@@ -37,7 +36,7 @@ enum class RemoteButton
   Four = 68,
   Five = 64,
   Six = 67,
-  Seven = 7,
+  Seven = 7,  
   Eight = 21,
   Nine = 9,
   Zero = 25,
@@ -62,99 +61,34 @@ namespace explorerIR {
   RemoteIR::Format fmt = RemoteIR::UNKNOWN;
   int msg;
   int IRcallbackNum;
-
+    bool initialised = false
+ 
   /**
   * button pushed.
   */
   //% blockId=ir_received_left_event
   //% block="on |%btn| button pressed"
   void onPressEvent(RemoteButton btn, Action body) {
+      //if (!initialised) {
+      //    initIR(Pins::P2);
+      //    initialised = true;
+     // }
+
     if(actions.find(btn) == actions.end()) {
         vector<Action> act;
         actions[btn] = act;
     } 
     actions[btn].push_back(body);
   }
+    void cA(vA runner) {
+        for(int i = 0; i < runner.size(); i++) { 
+            runAction0(runner[i]);
+        } 
+    }
 
-  void cA(vA runner){for(int i=0;i<runner.size();i++){runAction0(runner[i]);} }
-
-  void onReceivable(){
+  void onReceivable() {
     int x = rx->getData(&fmt, buf, 32 * 8);
-/*    
-    uBit.serial.send(".");
-    uBit.serial.send(buf[0]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[1]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[2]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[3]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[4]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[5]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[6]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[7]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[8]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[9]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[10]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[11]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[12]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[13]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[14]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[15]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[16]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[17]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[18]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[19]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[20]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[21]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[22]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[23]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[24]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[25]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[26]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[27]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[28]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[29]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[30]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[31]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[32]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[33]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[34]);
-    uBit.serial.send(".");
-    uBit.serial.send(buf[35]);
-    uBit.serial.send(".end");
-*/
+//    uBit.serial.send(".");
     if(actions.find((RemoteButton)buf[2]) == actions.end()) 
         return;
     now = tsb.read_ms();
@@ -183,23 +117,9 @@ namespace explorerIR {
     tsb.start(); //interrupt timer for debounce
     create_fiber(monitorIR);
   }
+  
   //% 
   int getParam(){
     return msg;
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 }

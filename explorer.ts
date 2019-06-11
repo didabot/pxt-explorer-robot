@@ -1,6 +1,22 @@
+
+//% color=#0fbc11 weight=10 icon="\uf136"
+namespace TestNamespace {
+    export enum test {
+        //% block="S1"
+        S1 = 0x1,
+        //% block="S2"
+        S2 = 0x2,
+    }
+
+    //% blockId=explorer_stop_1 block="Motor Stop|%index|"
+    //% weight=80
+    export function MotorStop(index: number): void {
+        explorer.i2cwrite(0, 0, 0)
+    }
+}
+
 //% color=#0fbc11 weight=10 icon="\uf013"
 namespace explorer {
-
     let ultraTrigPin = DigitalPin.P14
     let ultraEchoPin = DigitalPin.P15
     let leftLinePin = DigitalPin.P16
@@ -85,7 +101,7 @@ namespace explorer {
         Black = 0x000000
     }
 
-    function i2cwrite(addr: number, reg: number, value: number) {
+    export function i2cwrite(addr: number, reg: number, value: number) {
         let buf = pins.createBuffer(2)
         buf[0] = reg
         buf[1] = value
@@ -249,7 +265,7 @@ namespace explorer {
         if (level >= 4096) {
             level = 4095
         }
-        
+
         setPwm(index, 0, level);
     }
 
@@ -286,7 +302,7 @@ namespace explorer {
         TurnOffCarLight(CarLight.TailLeft);
         TurnOffCarLight(CarLight.TailRight);
     }
-    
+
     /**
 	 * Get Ultrasonic Distance
 	*/

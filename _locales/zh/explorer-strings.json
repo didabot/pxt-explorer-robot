@@ -33,5 +33,8 @@
     "explorer.SetCarLightBrightness|block": "设置车灯|车灯 %index|亮度 %level",
     "explorer.SetAllCarLightsBrightness|block": "设置所有车灯|亮度 %level",
     "explorer.TurnOffCarLight|block": "关闭车灯|车灯 %index",
-    "explorer.TurnOffAllCarLights|block": "关闭所有车灯"
+    "explorer.TurnOffAllCarLights|block": "关闭所有车灯",
+    "{id:category}Explorer": "探索者",
+    "explorerIR.onPressEvent|block": "当遥控器按键|%btn|按下时",
+    "{id:category}ExplorerIR": "探索者红外"
 }
