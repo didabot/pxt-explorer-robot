@@ -23,5 +23,5 @@
         "tests.ts"
     ],
     "public": true,
-    "installedVersion": "workspace:5fbd46d3-52b8-4765-eaa0-602196fb24e2"
+    "installedVersion": "file:../pxt-explorer"
 }

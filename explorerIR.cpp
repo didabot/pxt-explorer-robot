@@ -61,30 +61,12 @@ namespace explorerIR {
   RemoteIR::Format fmt = RemoteIR::UNKNOWN;
   int msg;
   int IRcallbackNum;
-    bool initialised = false
- 
-  /**
-  * button pushed.
-  */
-  //% blockId=ir_received_left_event
-  //% block="on |%btn| button pressed"
-  void onPressEvent(RemoteButton btn, Action body) {
-      //if (!initialised) {
-      //    initIR(Pins::P2);
-      //    initialised = true;
-     // }
 
-    if(actions.find(btn) == actions.end()) {
-        vector<Action> act;
-        actions[btn] = act;
-    } 
-    actions[btn].push_back(body);
+  void cA(vA runner) {
+      for(int i = 0; i < runner.size(); i++) { 
+          runAction0(runner[i]);
+      } 
   }
-    void cA(vA runner) {
-        for(int i = 0; i < runner.size(); i++) { 
-            runAction0(runner[i]);
-        } 
-    }
 
   void onReceivable() {
     int x = rx->getData(&fmt, buf, 32 * 8);
@@ -116,10 +98,26 @@ namespace explorerIR {
     rx = new ReceiverIR((PinName)pin);
     tsb.start(); //interrupt timer for debounce
     create_fiber(monitorIR);
-  }
-  
-  //% 
-  int getParam(){
-    return msg;
+  }  
+
+  /**
+  * button pushed.
+  */
+  //% blockId=ir_received_left_event
+  //% block="on |%btn| button pressed"
+  void onPressEvent(RemoteButton btn, Action body) {
+    static bool inited = false;
+    
+    if (!inited)
+    {
+      initIR(Pins::P2);
+      inited = true;
+    }
+
+    if(actions.find(btn) == actions.end()) {
+        vector<Action> act;
+        actions[btn] = act;
+    } 
+    actions[btn].push_back(body);
   }
 }
