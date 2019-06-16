@@ -1,28 +1,5 @@
 
-//% color=#0fbc11 weight=10 icon="\uf136"
-namespace TestNamespace {
-    export enum test {
-        //% block="S1"
-        S1 = 0x1,
-        //% block="S2"
-        S2 = 0x2,
-    }
-
-    //% blockId=explorer_stop_1 block="Motor Stop|%index|"
-    //% weight=80
-    export function MotorStop(index: number): void {
-        explorer.i2cwrite(0, 0, 0)
-    }
-}
-
-//% color=#0fbc11 weight=10 icon="\uf013"
-namespace explorer {
-    let ultraTrigPin = DigitalPin.P14
-    let ultraEchoPin = DigitalPin.P15
-    let leftLinePin = DigitalPin.P16
-    let rightLinePin = DigitalPin.P19
-    let neoStrip: neopixel.Strip = neopixel.create(DigitalPin.P1, 3, NeoPixelMode.RGB)
-
+namespace PCA9685_Drive {
     // definitions for PCA9685 chip
     let initialized = false
     const PCA9685_ADDRESS = 0x40
@@ -41,12 +18,74 @@ namespace explorer {
     const ALL_LED_OFF_L = 0xFC
     const ALL_LED_OFF_H = 0xFD
 
-    export enum Motors {
-        //% block="M1"
-        M1 = 0x1,
-        //% block="M2"
-        M2 = 0x2,
+    function i2cwrite(addr: number, reg: number, value: number) {
+        let buf = pins.createBuffer(2)
+        buf[0] = reg
+        buf[1] = value
+        pins.i2cWriteBuffer(addr, buf)
     }
+
+    function i2cread(addr: number, reg: number) {
+        pins.i2cWriteNumber(addr, reg, NumberFormat.UInt8BE)
+        let val = pins.i2cReadNumber(addr, NumberFormat.UInt8BE)
+        return val
+    }
+
+    function i2ccmd(addr: number, value: number) {
+        let buf = pins.createBuffer(1)
+        buf[0] = value
+        pins.i2cWriteBuffer(addr, buf)
+    }
+
+    export function initPCA9685(): void {
+        if (!initialized) {
+            i2cwrite(PCA9685_ADDRESS, MODE1, 0x00)
+            setFreq(50); //1s / 20ms
+            for (let idx = 0; idx < 16; idx++) {
+                setPwm(idx, 0, 0);
+            }
+            initialized = true                
+        }
+    }
+
+    export function setFreq(freq: number): void {
+        // Constrain the frequency
+        let prescaleval = 25000000
+        prescaleval /= 4096
+        prescaleval /= freq
+        prescaleval = prescaleval * 25 / 24  // 0.915
+        prescaleval -= 1
+        let prescale = prescaleval //Math.Floor(prescaleval + 0.5);
+        let oldmode = i2cread(PCA9685_ADDRESS, MODE1)
+        let newmode = (oldmode & 0x7F) | 0x10 // sleep
+        i2cwrite(PCA9685_ADDRESS, MODE1, newmode) // go to sleep
+        i2cwrite(PCA9685_ADDRESS, PRESCALE, prescale) // set the prescaler
+        i2cwrite(PCA9685_ADDRESS, MODE1, oldmode)
+        basic.pause(1)
+        //control.waitMicros(5000);
+        i2cwrite(PCA9685_ADDRESS, MODE1, oldmode | 0xa1)  //1010 0001
+    }
+
+    export function setPwm(channel: number, on: number, off: number): void {
+        if (channel < 0 || channel > 15)
+            return;
+
+        let buf = pins.createBuffer(5)
+        buf[0] = LED0_ON_L + 4 * channel
+        buf[1] = on & 0xff
+        buf[2] = (on >> 8) & 0xff
+        buf[3] = off & 0xff
+        buf[4] = (off >> 8) & 0xff
+        pins.i2cWriteBuffer(PCA9685_ADDRESS, buf)
+    }
+}
+
+//% color=#0fbc11 weight=10 icon="\uf013"
+namespace Sensor {
+    let ultraTrigPin = DigitalPin.P14
+    let ultraEchoPin = DigitalPin.P15
+    let leftLinePin = DigitalPin.P16
+    let rightLinePin = DigitalPin.P19
 
     export enum LineSensor {
         //% block="Left"
@@ -54,6 +93,85 @@ namespace explorer {
         //% block="Right"
         Right = 0x2
     }
+
+    /**
+     * Set Ultrasonic Sensor Angle
+     * @param degree [-80-80] degree of servo; eg: -80, 0, 80
+    */
+    //% blockId=explorer_set_ultra_angle block="Move Ultrasonic|Angle %angle"
+    //% weight=100
+    //% angle.min=-80 angle.max=80
+    //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
+    export function SetUltraAngle(angle: number) {
+        let servoChanel = 6
+        let angleDevice = (angle + 90) * -1 + 180 - 3;
+        if (angleDevice < 0)
+            angleDevice = 0
+        if (angleDevice > 180)
+            angleDevice = 180
+        console.log("angle : " + angle)
+        SetServoAngle(servoChanel, angleDevice)
+    }
+
+    /**
+	 * Get Ultrasonic Distance
+	*/
+    //% blockId=explorer_ultrasonic block="Ultrasonic Distance"
+    //% weight=10
+    export function Ultrasonic(): number {
+        // send pulse
+        pins.setPull(ultraTrigPin, PinPullMode.PullNone);
+        pins.digitalWritePin(ultraTrigPin, 0);
+        control.waitMicros(2);
+        pins.digitalWritePin(ultraTrigPin, 1);
+        control.waitMicros(10);
+        pins.digitalWritePin(ultraTrigPin, 0);
+
+        // read pulse
+        let d = pins.pulseIn(ultraEchoPin, PulseValue.High, 23000);  // 8 / 340 = 
+        //return d * 5 / 3 / 58;
+        console.log("Distance: " + d / 42);
+        return d / 42;
+    }
+
+    function SetServoAngle(index: number, degree: number): void {
+        PCA9685_Drive.initPCA9685()
+        // 50hz: 20,000 us
+        let v_us = (degree * 1800 / 180 + 600) // 0.6 ~ 2.4
+        let value = v_us * 4096 / 20000
+        PCA9685_Drive.setPwm(index, 0, value)
+    }
+
+    /**
+	 * line follow left
+	*/
+    //% blockId=explorer_line_state block="Line Sensor State|sensor %sensor|"
+    //% weight=10
+    export function lineSensorState(sensor: LineSensor): number {
+
+        let pin = leftLinePin
+        if (sensor == LineSensor.Left) {
+            pin = leftLinePin;
+        }
+        else {
+            pin = rightLinePin;
+        }
+
+        let state = 0
+        if (pins.digitalReadPin(pin) == 1) {
+            state = 1
+        }
+        else {
+            state = 0;
+        }
+
+        return state
+    }
+}
+
+//% color=#0fbc11 weight=10 icon="\uf013"
+namespace Lights {
+    let neoStrip: neopixel.Strip = neopixel.create(DigitalPin.P1, 3, NeoPixelMode.RGB)
 
     export enum ColorLeds {
         //%block=FrontLed
@@ -72,7 +190,7 @@ namespace explorer {
         //%block=TailLeft
         TailLeft = 7,
         //%block=TailRight
-        TailRight = 5,
+        TailRight = 5
     }
 
     /**
@@ -101,155 +219,6 @@ namespace explorer {
         Black = 0x000000
     }
 
-    export function i2cwrite(addr: number, reg: number, value: number) {
-        let buf = pins.createBuffer(2)
-        buf[0] = reg
-        buf[1] = value
-        pins.i2cWriteBuffer(addr, buf)
-    }
-
-    function i2cread(addr: number, reg: number) {
-        pins.i2cWriteNumber(addr, reg, NumberFormat.UInt8BE)
-        let val = pins.i2cReadNumber(addr, NumberFormat.UInt8BE)
-        return val
-    }
-
-    function i2ccmd(addr: number, value: number) {
-        let buf = pins.createBuffer(1)
-        buf[0] = value
-        pins.i2cWriteBuffer(addr, buf)
-    }
-
-    function initPCA9685(): void {
-        i2cwrite(PCA9685_ADDRESS, MODE1, 0x00)
-        setFreq(50); //1s / 20ms
-        for (let idx = 0; idx < 16; idx++) {
-            setPwm(idx, 0, 0);
-        }
-        initialized = true
-    }
-
-    function setFreq(freq: number): void {
-        // Constrain the frequency
-        let prescaleval = 25000000
-        prescaleval /= 4096
-        prescaleval /= freq
-        prescaleval = prescaleval * 25 / 24  // 0.915
-        prescaleval -= 1
-        let prescale = prescaleval //Math.Floor(prescaleval + 0.5);
-        let oldmode = i2cread(PCA9685_ADDRESS, MODE1)
-        let newmode = (oldmode & 0x7F) | 0x10 // sleep
-        i2cwrite(PCA9685_ADDRESS, MODE1, newmode) // go to sleep
-        i2cwrite(PCA9685_ADDRESS, PRESCALE, prescale) // set the prescaler
-        i2cwrite(PCA9685_ADDRESS, MODE1, oldmode)
-        basic.pause(1)
-        //control.waitMicros(5000);
-        i2cwrite(PCA9685_ADDRESS, MODE1, oldmode | 0xa1)  //1010 0001
-    }
-
-    function setPwm(channel: number, on: number, off: number): void {
-        if (channel < 0 || channel > 15)
-            return;
-
-        let buf = pins.createBuffer(5)
-        buf[0] = LED0_ON_L + 4 * channel
-        buf[1] = on & 0xff
-        buf[2] = (on >> 8) & 0xff
-        buf[3] = off & 0xff
-        buf[4] = (off >> 8) & 0xff
-        pins.i2cWriteBuffer(PCA9685_ADDRESS, buf)
-    }
-
-    function stopMotor(index: number) {
-        setPwm((index - 1) * 2, 0, 0)
-        setPwm((index - 1) * 2 + 1, 0, 0)
-    }
-
-    // Run single motor
-    //% blockId=explorer_motor_run block="Motor Speed|%index|Speed %speed "
-    //% weight=85
-    //% speed.min=-100 speed.max=100
-    //% advanced=true
-    //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
-    export function MotorRun(index: Motors, speed: number): void {
-        if (!initialized) {
-            initPCA9685()
-        }
-        speed = speed * 40; // map 100 to 4096
-        if (speed >= 4096) {
-            speed = 4095
-        }
-        if (speed <= -4096) {
-            speed = -4095
-        }
-        if (index > 2 || index <= 0)
-            return
-        let pp = (index - 1) * 2
-        let pn = (index - 1) * 2 + 1
-        if (speed >= 0) {
-            setPwm(pp, 0, speed)
-            setPwm(pn, 0, 0)
-        } else {
-            setPwm(pp, 0, 0)
-            setPwm(pn, 0, -speed)
-        }
-    }
-
-    /**
-	 * Run two motors at the same time
-	 * @param speedL [-100-100] speed of motor; eg: 50
-	 * @param speedR [-100-100] speed of motor; eg: 50
-	*/
-    //% blockId=explorer_motor_dual block="Motor Speed |Left %speedL|Right %speedR"
-    //% weight=84
-    //% speedL.min=-100 speedL.max=100
-    //% speedR.min=-100 speedR.max=100
-    export function MotorRunDual(speedL: number, speedR: number): void {
-        //speedL = -speedL
-        let motor_left = Motors.M1
-        let motor_right = Motors.M2
-        MotorRun(motor_left, speedL);   //100 map to 255
-        MotorRun(motor_right, speedR);
-    }
-
-    //% blockId=explorer_stop block="Motor Stop|%index|"
-    //% weight=80
-    export function MotorStop(index: Motors): void {
-        MotorRun(index, 0);
-    }
-
-    //% blockId=explorer_stop_all block="Motor Stop All"
-    //% weight=79
-    //% blockGap=50
-    export function MotorStopAll(): void {
-        for (let idx = 1; idx <= 2; idx++) {
-            stopMotor(idx);
-        }
-    }
-
-    function SetServoAngle(index: number, degree: number): void {
-        if (!initialized) {
-            initPCA9685()
-        }
-        // 50hz: 20,000 us
-        let v_us = (degree * 1800 / 180 + 600) // 0.6 ~ 2.4
-        let value = v_us * 4096 / 20000
-        setPwm(index, 0, value)
-    }
-
-    /**
-     * Set Ultrasonic Sensor Angle
-     * @param degree [0-180] degree of servo; eg: 0, 90, 180
-    */
-    //% blockId=explorer_set_ultra_angle block="Move Ultrasonic|Angle %angle"
-    //% weight=100
-    //% angle.min=0 angle.max=180
-    //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
-    export function SetUltraAngle(angle: number) {
-        let servoChanel = 6
-        SetServoAngle(servoChanel, angle)
-    }
-
     // Set car light brightness
     //% blockId=set_car_light_brightness block="Set Car Light|Light|%index|Brightness %level "
     //% weight=85
@@ -257,16 +226,13 @@ namespace explorer {
     //% advanced=true
     //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
     export function SetCarLightBrightness(index: CarLight, level: number): void {
-        if (!initialized) {
-            initPCA9685()
-        }
-
+       
+        PCA9685_Drive.initPCA9685()
         level = level * 40; // map 100 to 4096
         if (level >= 4096) {
             level = 4095
         }
-
-        setPwm(index, 0, level);
+        PCA9685_Drive.setPwm(index, 0, level);
     }
 
     // Set all car lights brightness
@@ -301,53 +267,6 @@ namespace explorer {
         TurnOffCarLight(CarLight.HeadRight);
         TurnOffCarLight(CarLight.TailLeft);
         TurnOffCarLight(CarLight.TailRight);
-    }
-
-    /**
-	 * Get Ultrasonic Distance
-	*/
-    //% blockId=explorer_ultrasonic block="Ultrasonic Distance"
-    //% weight=10
-    export function Ultrasonic(): number {
-        // send pulse
-        pins.setPull(ultraTrigPin, PinPullMode.PullNone);
-        pins.digitalWritePin(ultraTrigPin, 0);
-        control.waitMicros(2);
-        pins.digitalWritePin(ultraTrigPin, 1);
-        control.waitMicros(10);
-        pins.digitalWritePin(ultraTrigPin, 0);
-
-        // read pulse
-        let d = pins.pulseIn(ultraEchoPin, PulseValue.High, 23000);  // 8 / 340 = 
-        //return d * 5 / 3 / 58;
-        console.log("Distance: " + d / 42);
-        return d / 42;
-    }
-
-    /**
-	 * line follow left
-	*/
-    //% blockId=explorer_line_state block="Line Sensor State|sensor %sensor|"
-    //% weight=10
-    export function lineSensorState(sensor: LineSensor): number {
-
-        let pin = leftLinePin
-        if (sensor == LineSensor.Left) {
-            pin = leftLinePin;
-        }
-        else {
-            pin = rightLinePin;
-        }
-
-        let state = 0
-        if (pins.digitalReadPin(pin) == 1) {
-            state = 1
-        }
-        else {
-            state = 0;
-        }
-
-        return state
     }
 
     /**
@@ -386,5 +305,78 @@ namespace explorer {
     export function ClearAllLeds(): void {
         neoStrip.clear()
         neoStrip.show()
+    }
+}
+
+//% color=#0fbc11 weight=10 icon="\uf013"
+namespace Motion {
+
+    export enum Motors {
+        //% block="LeftMotor"
+        LeftMotor = 0x1,
+        //% block="RightMotor"
+        RightMotor= 0x2
+    }
+
+    function stopMotor(index: number) {
+        PCA9685_Drive.setPwm((index - 1) * 2, 0, 0)
+        PCA9685_Drive.setPwm((index - 1) * 2 + 1, 0, 0)
+    }
+
+    // Run single motor
+    //% blockId=explorer_motor_run block="Set |%index|Speed|%speed "
+    //% weight=85
+    //% speed.min=-100 speed.max=100
+    //% advanced=true
+    //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
+    export function MotorRun(index: Motors, speed: number): void {
+        PCA9685_Drive.initPCA9685()
+        speed = speed * 40; // map 100 to 4096
+        if (speed >= 4096) {
+            speed = 4095
+        }
+        if (speed <= -4096) {
+            speed = -4095
+        }
+        if (index > 2 || index <= 0)
+            return
+        let pp = (index - 1) * 2
+        let pn = (index - 1) * 2 + 1
+        if (speed >= 0) {
+            PCA9685_Drive.setPwm(pp, 0, speed)
+            PCA9685_Drive.setPwm(pn, 0, 0)
+        } else {
+            PCA9685_Drive.setPwm(pp, 0, 0)
+            PCA9685_Drive.setPwm(pn, 0, -speed)
+        }
+    }
+
+    /**
+	 * Run two motors at the same time
+	 * @param speedL [-100-100] speed of motor; eg: 50
+	 * @param speedR [-100-100] speed of motor; eg: 50
+	*/
+    //% blockId=explorer_motor_dual block="Motor Speed |Left %speedL|Right %speedR"
+    //% weight=84
+    //% speedL.min=-100 speedL.max=100
+    //% speedR.min=-100 speedR.max=100
+    export function MotorRunDual(speedL: number, speedR: number): void {
+        MotorRun(Motors.LeftMotor, speedL);   
+        MotorRun(Motors.RightMotor, speedR);
+    }
+
+    //% blockId=explorer_stop block="Motor Stop|%index|"
+    //% weight=80
+    export function MotorStop(index: Motors): void {
+        MotorRun(index, 0);
+    }
+
+    //% blockId=explorer_stop_all block="Motor Stop All"
+    //% weight=79
+    //% blockGap=50
+    export function MotorStopAll(): void {
+        for (let idx = 1; idx <= 2; idx++) {
+            stopMotor(idx);
+        }
     }
 }

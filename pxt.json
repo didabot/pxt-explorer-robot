@@ -23,5 +23,6 @@
         "tests.ts"
     ],
     "public": true,
-    "installedVersion": "file:../pxt-explorer"
+    "installedVersion": "file:../pxt-explorer",
+    "preferredEditor": "tsprj"
 }
