@@ -44,7 +44,7 @@ namespace PCA9685_Drive {
             for (let idx = 0; idx < 16; idx++) {
                 setPwm(idx, 0, 0);
             }
-            initialized = true                
+            initialized = true
         }
     }
 
@@ -80,25 +80,29 @@ namespace PCA9685_Drive {
     }
 }
 
-//% color=#0fbc11 weight=10 icon="\uf013"
-namespace Sensor {
+//% color=#0fbc11 weight=10 icon="\uf0ee"
+namespace Explorer_Sensor {
     let ultraTrigPin = DigitalPin.P14
     let ultraEchoPin = DigitalPin.P15
     let leftLinePin = DigitalPin.P16
     let rightLinePin = DigitalPin.P19
 
-    export enum LineSensor {
-        //% block="Left"
-        Left = 0x1,
-        //% block="Right"
-        Right = 0x2
+    export enum TrackingState {
+        //% block="● ●" enumval=0
+        State_0,
+        //% block="● ◌" enumval=1
+        State_1,
+        //% block="◌ ●" enumval=2
+        State_2,
+        //% block="◌ ◌" enumval=3
+        State_3
     }
 
     /**
-     * Set Ultrasonic Sensor Angle
+     * set ultrasonic sensor angle
      * @param degree [-80-80] degree of servo; eg: -80, 0, 80
     */
-    //% blockId=explorer_set_ultra_angle block="Move Ultrasonic|Angle %angle"
+    //% blockId=explorer_set_ultra_sensor_angle block="set ultrasonic sensor angle to |%angle| degree"
     //% weight=100
     //% angle.min=-80 angle.max=80
     //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
@@ -114,9 +118,9 @@ namespace Sensor {
     }
 
     /**
-	 * Get Ultrasonic Distance
+	 * get ultrasonic distance
 	*/
-    //% blockId=explorer_ultrasonic block="Ultrasonic Distance"
+    //% blockId=explorer_get_ultrasonic_distance block="ultrasonic distance (cm)"
     //% weight=10
     export function Ultrasonic(): number {
         // send pulse
@@ -143,60 +147,57 @@ namespace Sensor {
     }
 
     /**
-	 * line follow left
-	*/
-    //% blockId=explorer_line_state block="Line Sensor State|sensor %sensor|"
+     * get tracking state
+     */
+    //% blockid=explorer_get_tracking_state 
+    //% block="tracking state is %state"
     //% weight=10
-    export function lineSensorState(sensor: LineSensor): number {
+    export function trackingState(state: TrackingState): boolean {
+        let left_sensor = pins.digitalReadPin(leftLinePin)
+        let right_sensor = pins.digitalReadPin(rightLinePin)
 
-        let pin = leftLinePin
-        if (sensor == LineSensor.Left) {
-            pin = leftLinePin;
-        }
-        else {
-            pin = rightLinePin;
-        }
-
-        let state = 0
-        if (pins.digitalReadPin(pin) == 1) {
-            state = 1
-        }
-        else {
-            state = 0;
+        if ((state == TrackingState.State_0) && (left_sensor == 1)
+            && (right_sensor == 1)) {
+            return true;
+        } else if ((state == TrackingState.State_1) && (left_sensor == 1)
+            && (right_sensor == 0)) {
+            return true;
+        } else if ((state == TrackingState.State_2) && (left_sensor == 0)
+            && (right_sensor == 1)) {
+            return true;
+        } else if ((state == TrackingState.State_3) && (left_sensor == 0)
+            && (right_sensor == 0)) {
+            return true;
         }
 
-        return state
+        return false;
     }
 }
 
-//% color=#0fbc11 weight=10 icon="\uf013"
-namespace Lights {
+//% color=#0fbc11 weight=10 icon="\uf110"
+namespace Explorer_Lights {
     let neoStrip: neopixel.Strip = neopixel.create(DigitalPin.P1, 3, NeoPixelMode.RGB)
-
-    export enum ColorLeds {
-        //%block=FrontLed
-        FrontLed = 0,
-        //%block=LeftLed
-        LeftLed = 1,
-        //%block=RightLed
-        RightLed = 2
+    export enum BaseLight {
+        //%block=Front
+        Front = 0,
+        //%block=Left
+        Left = 1,
+        //%block=Right
+        Right = 2
     }
 
     export enum CarLight {
-        //%block=HeadLeft
+        //%block="left head"
         HeadLeft = 8,
-        //%block=HeadRight
+        //%block="right head"
         HeadRight = 9,
-        //%block=TailLeft
+        //%block="left tail"
         TailLeft = 7,
-        //%block=TailRight
+        //%block="right tail"
         TailRight = 5
     }
 
-    /**
-     * Well known colors for a NeoPixel strip
-    */
-    export enum LedColors {
+    export enum LightColors {
         //% block=red
         Red = 0xFF0000,
         //% block=orange
@@ -219,28 +220,26 @@ namespace Lights {
         Black = 0x000000
     }
 
-    // Set car light brightness
-    //% blockId=set_car_light_brightness block="Set Car Light|Light|%index|Brightness %level "
-    //% weight=85
+    // set car light brightness
+    //% blockId=explorer_set_car_light_brightness 
+    //% block="set |%light| light brightness to |%level"
+    //% weight=10
     //% level.min=0 level.max=100
     //% advanced=true
-    //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
-    export function SetCarLightBrightness(index: CarLight, level: number): void {
-       
+    export function SetCarLightBrightness(light: CarLight, level: number): void {
         PCA9685_Drive.initPCA9685()
         level = level * 40; // map 100 to 4096
         if (level >= 4096) {
             level = 4095
         }
-        PCA9685_Drive.setPwm(index, 0, level);
+        PCA9685_Drive.setPwm(light, 0, level);
     }
 
-    // Set all car lights brightness
-    //% blockId=set_all_car_lights_brightness block="Set All Car Lights|Brightness %level "
-    //% weight=85
+    // set all car lights brightness
+    //% blockId=explorer_set_all_car_lights_brightness block="set all car lights brightness to %level"
+    //% weight=10
     //% level.min=0 level.max=100
     //% advanced=true
-    //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
     export function SetAllCarLightsBrightness(level: number): void {
         SetCarLightBrightness(CarLight.HeadLeft, level)
         SetCarLightBrightness(CarLight.HeadRight, level)
@@ -248,135 +247,155 @@ namespace Lights {
         SetCarLightBrightness(CarLight.TailRight, level)
     }
 
-    // Turn off car light
-    //% blockId=turn_off_car_light block="Turn Off Car Light|Light|%index"
-    //% weight=85
+    // turn off car light
+    //% blockId=explorer_turn_off_car_light block="turn |%light| light off"
+    //% weight=10
     //% advanced=true
-    //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
-    export function TurnOffCarLight(index: CarLight): void {
-        SetCarLightBrightness(index, 0);
+    export function TurnCarLightOff(light: CarLight): void {
+        SetCarLightBrightness(light, 0);
     }
 
-    // Turn off all car lights
-    //% blockId=turn_off_all_car_lights block="Turn Off All Car Lights"
-    //% weight=85
+    // turn all car lights off
+    //% blockId=explorer_turn_all_car_lights_off block="turn all car lights off"
+    //% weight=10
     //% advanced=true
-    //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
-    export function TurnOffAllCarLights(): void {
-        TurnOffCarLight(CarLight.HeadLeft);
-        TurnOffCarLight(CarLight.HeadRight);
-        TurnOffCarLight(CarLight.TailLeft);
-        TurnOffCarLight(CarLight.TailRight);
+    export function TurnAllCarLightsOff(): void {
+        TurnCarLightOff(CarLight.HeadLeft);
+        TurnCarLightOff(CarLight.HeadRight);
+        TurnCarLightOff(CarLight.TailLeft);
+        TurnCarLightOff(CarLight.TailRight);
     }
 
     /**
-     * Set LED to a given color (range 0-255 for r, g, b). 
-     * @param led position of the NeoPixel in the strip
-     * @param rgb RGB color of the LED
+     * set base light to a given color. 
     */
-    //% blockId="explorer_set_pixel_color" block="set led color at %led|to %rgb"
-    //% blockGap=8
-    //% weight=80
-    export function setLedColor(led: ColorLeds, rgb: LedColors): void {
-        neoStrip.setPixelColor(led, rgb)
+    //% blockId="explorer_set_base_light_color" block="set |%led| base light to |%color"
+    //% weight=10
+    export function setBaseLightColor(light: BaseLight, color: LightColors): void {
+        neoStrip.setPixelColor(light, color)
         neoStrip.show()
     }
 
     /**
-     * Set All LEDs to a given color (range 0-255 for r, g, b). 
-     * @param rgb RGB color of the LEDs
+     * set all base lights to a given color. 
     */
-    //% blockId="explorer_set_all_pixel_color" block="set all leds color to %rgb"
-    //% blockGap=8
-    //% weight=80
-    export function setAllLedColor(rgb: LedColors): void {
-        neoStrip.setPixelColor(ColorLeds.FrontLed, rgb)
-        neoStrip.setPixelColor(ColorLeds.LeftLed, rgb)
-        neoStrip.setPixelColor(ColorLeds.RightLed, rgb)
+    //% blockId="explorer_set_all_base_lights_color" block="set all base lights to %color"
+    //% weight=10
+    export function setAllBaseLightsColor(color: LightColors): void {
+        neoStrip.setPixelColor(BaseLight.Front, color)
+        neoStrip.setPixelColor(BaseLight.Left, color)
+        neoStrip.setPixelColor(BaseLight.Right,color)
         neoStrip.show()
     }
 
     /**
-     * Clear All LEDs(turn off all leds). 
+     * clear all base lights. 
     */
-    //% blockId=explorer_clear_all_leds block="Clear All LEDs"
-    //% weight=80
-    //% blockGap=8
-    export function ClearAllLeds(): void {
+    //% blockId=explorer_clear_all_base_lights block="clear all base lights"
+    //% weight=10
+    export function ClearAllBaseLights(): void {
         neoStrip.clear()
         neoStrip.show()
     }
 }
 
-//% color=#0fbc11 weight=10 icon="\uf013"
-namespace Motion {
-
-    export enum Motors {
-        //% block="LeftMotor"
-        LeftMotor = 0x1,
-        //% block="RightMotor"
-        RightMotor= 0x2
+//% color=#0fbc11 weight=10 icon="\uf207"
+namespace Explorer_Motion {
+    export enum Wheel {
+        //% block="right wheel"
+        right = 0x1,
+        //% block="left wheel"
+        left = 0x2
     }
 
-    function stopMotor(index: number) {
-        PCA9685_Drive.setPwm((index - 1) * 2, 0, 0)
-        PCA9685_Drive.setPwm((index - 1) * 2 + 1, 0, 0)
+    export enum Direction {
+        //% block="forward"
+        forward,
+        //% block="backward"
+        backward
     }
 
-    // Run single motor
-    //% blockId=explorer_motor_run block="Set |%index|Speed|%speed "
-    //% weight=85
-    //% speed.min=-100 speed.max=100
+    // run wheel at a given speed
+    //% blockId=explorer_run_wheel block="run |%w| at speed |%speed| %dir"
+    //% weight=10
+    //% speed.min=0 speed.max=100
     //% advanced=true
-    //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
-    export function MotorRun(index: Motors, speed: number): void {
+    export function runWheel(w: Wheel, speed: number, dir: Direction): void {
         PCA9685_Drive.initPCA9685()
-        speed = speed * 40; // map 100 to 4096
-        if (speed >= 4096) {
+ 
+        speed = speed * 40.96; // scaling 100 to 4096 
+        if (speed > 4095) {
             speed = 4095
         }
-        if (speed <= -4096) {
-            speed = -4095
-        }
-        if (index > 2 || index <= 0)
+        
+        if (w > 2 || w <= 0)
             return
-        let pp = (index - 1) * 2
-        let pn = (index - 1) * 2 + 1
-        if (speed >= 0) {
-            PCA9685_Drive.setPwm(pp, 0, speed)
-            PCA9685_Drive.setPwm(pn, 0, 0)
-        } else {
-            PCA9685_Drive.setPwm(pp, 0, 0)
-            PCA9685_Drive.setPwm(pn, 0, -speed)
+        
+        let pp = (w - 1) * 2
+        let pn = (w - 1) * 2 + 1
+
+        if (w == Wheel.right) {
+            if (dir == Direction.forward) {
+                PCA9685_Drive.setPwm(pp, 0, 0)
+                PCA9685_Drive.setPwm(pn, 0, speed)
+            } else {
+                PCA9685_Drive.setPwm(pp, 0, speed)
+                PCA9685_Drive.setPwm(pn, 0, 0)
+            }
+        } else if (w == Wheel.left) {
+            if (dir == Direction.forward) {
+                PCA9685_Drive.setPwm(pp, 0, speed)
+                PCA9685_Drive.setPwm(pn, 0, 0)
+            } else {
+                PCA9685_Drive.setPwm(pp, 0, 0)
+                PCA9685_Drive.setPwm(pn, 0, speed)
+            }
         }
     }
 
-    /**
-	 * Run two motors at the same time
-	 * @param speedL [-100-100] speed of motor; eg: 50
-	 * @param speedR [-100-100] speed of motor; eg: 50
-	*/
-    //% blockId=explorer_motor_dual block="Motor Speed |Left %speedL|Right %speedR"
-    //% weight=84
-    //% speedL.min=-100 speedL.max=100
-    //% speedR.min=-100 speedR.max=100
-    export function MotorRunDual(speedL: number, speedR: number): void {
-        MotorRun(Motors.LeftMotor, speedL);   
-        MotorRun(Motors.RightMotor, speedR);
+    // run forward at full speed
+    //% blockId=explorer_run_forward block="run forward at full speed"
+    //% weight=10
+    export function runForward() : void {
+        runWheel(Wheel.left, 100, Direction.forward);
+        runWheel(Wheel.right, 100, Direction.forward)
     }
 
-    //% blockId=explorer_stop block="Motor Stop|%index|"
-    //% weight=80
-    export function MotorStop(index: Motors): void {
-        MotorRun(index, 0);
+    // run backward at full speed
+    //% blockId=explorer_run_backward block="run backward at full speed"
+    //% weight=10
+    export function runBackward(): void {
+        runWheel(Wheel.left, 100, Direction.backward);
+        runWheel(Wheel.right, 100, Direction.backward)
     }
 
-    //% blockId=explorer_stop_all block="Motor Stop All"
-    //% weight=79
-    //% blockGap=50
-    export function MotorStopAll(): void {
-        for (let idx = 1; idx <= 2; idx++) {
-            stopMotor(idx);
-        }
+    // turn left at full speed
+    //% blockId=explorer_turn_left block="turn left at full speed"
+    //% weight=10
+    export function turnLeft(): void {
+        runWheel(Wheel.left, 100, Direction.backward);
+        runWheel(Wheel.right, 100, Direction.forward)
+    }
+
+    // turn right at full speed
+    //% blockId=explorer_turn_right block="turn right at full speed"
+    //% weight=10
+    export function turnRight(): void {
+        runWheel(Wheel.left, 100, Direction.forward);
+        runWheel(Wheel.right, 100, Direction.backward)
+    }
+
+    // brake car
+    //% blockId=explorer_brake_car block="brake car"
+    //% weight=10
+    export function brake(): void {
+        runWheel(Wheel.left, Direction.forward, 0);
+        runWheel(Wheel.right, Direction.forward, 0)
+    }
+
+    //% advanced=true 
+    //% shim=Explorer_IR::onPressEvent
+    function onPressEvent(btn: RemoteButton, body: Action): void {
+        return
     }
 }

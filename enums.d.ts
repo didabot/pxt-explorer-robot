@@ -61,7 +61,7 @@
     //% block=Ok
     Ok = 28,
     }
-declare namespace explorerIR {
+declare namespace Explorer_IR {
 }
 
 // Auto-generated. Do not edit. Really.

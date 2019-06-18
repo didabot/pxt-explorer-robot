@@ -2,15 +2,15 @@
 
 
 
-    //% color=50 weight=80
+    //% color=#0fbc11 weight=10 
     //% icon="\uf1eb"
-declare namespace explorerIR {
+declare namespace Explorer_IR {
 
     /**
-     * button pushed.
+     * set button pressed event handler.
      */
-    //% blockId=ir_received_left_event
-    //% block="on |%btn| button pressed" shim=explorerIR::onPressEvent
+    //% blockId=explorer_ir_button_pressed_event
+    //% block="on button |%btn| pressed" shim=Explorer_IR::onPressEvent
     function onPressEvent(btn: RemoteButton, body: () => void): void;
 }
 

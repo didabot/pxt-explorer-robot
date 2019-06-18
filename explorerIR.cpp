@@ -66,10 +66,9 @@ enum class RemoteButton
   Ok = 28
 };
 
-//% color=50 weight=80
+//% color=#0fbc11 weight=10 
 //% icon="\uf1eb"
-namespace explorerIR { 
-
+namespace Explorer_IR { 
   map<RemoteButton, vA> actions;
   map<RemoteButton, uint32_t> lastact;
   Timer tsb; 
@@ -113,15 +112,13 @@ namespace explorerIR {
   }  
 
   /**
-  * button pushed.
+  * set button pressed event handler.
   */
-  //% blockId=ir_received_left_event
-  //% block="on |%btn| button pressed"
+  //% blockId=explorer_ir_button_pressed_event
+  //% block="on button |%btn| pressed"
   void onPressEvent(RemoteButton btn, Action body) {
     static bool inited = false;
-    
-    if (!inited)
-    {
+    if (!inited) {
       initIR(Pins::P2);
       inited = true;
     }
