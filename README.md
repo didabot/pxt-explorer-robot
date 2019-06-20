@@ -6,7 +6,6 @@ The Explorer Robot Kit is designed for students and geeks who can use it for cre
 The robot has two wheels to move, a chargeable battery for power and many sensors to detect 
 enviroment. Let us explore the world with Explorer Robot. enjoy it!!!
 
-
 ![](https://github.com/ttrobotics/pxt-explorer/blob/master/icon.png)
 
 # Basic usage
@@ -75,6 +74,55 @@ basic.forever(function () {
 ## Lights
 
 ### Base Color Lights
+change color of base light
+```
+basic.forever(function () {
+    Explorer_Lights.setBaseLightColor(Explorer_Lights.BaseLight.Front, Explorer_Lights.LightColors.Red)
+    basic.pause(500)
+    Explorer_Lights.setBaseLightColor(Explorer_Lights.BaseLight.Front, Explorer_Lights.LightColors.Yellow)
+    basic.pause(500)
+    Explorer_Lights.setBaseLightColor(Explorer_Lights.BaseLight.Front, Explorer_Lights.LightColors.Green)
+    basic.pause(500)
+})
+```
+
+### Car Lights
+set brightness of car lights
+```
+Explorer_Lights.SetCarLightBrightness(Explorer_Lights.CarLight.HeadLeft, 50)
+Explorer_Lights.SetCarLightBrightness(Explorer_Lights.CarLight.HeadRight, 50)
+Explorer_Lights.SetCarLightBrightness(Explorer_Lights.CarLight.TailLeft, 100)
+Explorer_Lights.SetCarLightBrightness(Explorer_Lights.CarLight.TailRight, 100)
+
+```
+
+## Motion
+
+run forward at full speed
+```
+Explorer_Motion.runForward()
+```
+run backward at full speed
+```
+Explorer_Motion.runBackward()
+```
+turn left
+```
+Explorer_Motion.turnLeft()
+```
+turn right
+```
+Explorer_Motion.turnRight()
+```
+brake the car
+```
+Explorer_Motion.brake()
+```
+set wheel speed and direction by your need
+```
+Explorer_Motion.runWheel(Explorer_Motion.Wheel.left, 55, Explorer_Motion.Direction.forward)
+Explorer_Motion.runWheel(Explorer_Motion.Wheel.right, 66, Explorer_Motion.Direction.forward)
+```
 
 # License
 
@@ -84,7 +132,6 @@ MIT
 # Supported targets
 
 * for PXT/microbit
-(The metadata above is needed for package search.)
 
 ```package
 explorer=github:/ttrobotics/pxt-explorer
