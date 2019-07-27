@@ -48,6 +48,7 @@ namespace PCA9685_Drive {
         }
     }
 
+
     export function setFreq(freq: number): void {
         // Constrain the frequency
         let prescaleval = 25000000
