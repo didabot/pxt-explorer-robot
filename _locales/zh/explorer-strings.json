@@ -54,10 +54,17 @@
     "Explorer_Motion.Wheel.right|block": "右轮",
     "Explorer_Motion.Direction.forward|block": "向前",
     "Explorer_Motion.Direction.backward|block": "向后",    
+    "Explorer_Motion.ClockDir.cw|block": "顺时针",
+    "Explorer_Motion.ClockDir.ccw|block": "逆时针",    
     "Explorer_Motion.runWheel|block": "设置|%w|以速度|%speed|%dir|运行",
-    "Explorer_Motion.runForward|block": "全速前进",
-    "Explorer_Motion.runBackward|block": "全速后退",
-    "Explorer_Motion.turnLeft|block": "全速左转",
-    "Explorer_Motion.turnRight|block": "全速右转",
-    "Explorer_Motion.brake|block": "刹车"
+    "Explorer_Motion.runForwardAtFullSpeed|block": "全速前进",
+    "Explorer_Motion.runBackwardFullSpeed|block": "全速后退",
+    "Explorer_Motion.turnLeftFullSpeed|block": "全速左转",
+    "Explorer_Motion.turnRightFullSpeed|block": "全速右转",
+    "Explorer_Motion.brake|block": "刹车",
+    "Explorer_Motion.runForwardAtSpecifiedSpeed|block": "以速度|%speed|前进",
+    "Explorer_Motion.runBackwardAtSpecifiedSpeed|block": "以速度|%speed|后退",
+    "Explorer_Motion.turnLeftAtSpecifiedSpeed|block": "以速度|%speed|左转",
+    "Explorer_Motion.turnRightAtSpecifiedSpeed|block": "以速度|%speed|右转",
+    "Explorer_Motion.spin|block": "以速度|%speed|%dir|旋转"    
 }

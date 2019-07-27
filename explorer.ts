@@ -85,7 +85,7 @@ namespace Explorer_Sensor {
     let ultraTrigPin = DigitalPin.P14
     let ultraEchoPin = DigitalPin.P15
     let leftLinePin = DigitalPin.P16
-    let rightLinePin = DigitalPin.P19
+    let rightLinePin = DigitalPin.P8
 
     export enum TrackingState {
         //% block="● ●" enumval=0
@@ -154,19 +154,23 @@ namespace Explorer_Sensor {
     //% weight=10
     export function trackingState(state: TrackingState): boolean {
         let left_sensor = pins.digitalReadPin(leftLinePin)
-        let right_sensor = pins.digitalReadPin(rightLinePin)
+        let right_sensor
+            = pins.digitalReadPin(rightLinePin)
 
-        if ((state == TrackingState.State_0) && (left_sensor == 1)
-            && (right_sensor == 1)) {
-            return true;
-        } else if ((state == TrackingState.State_1) && (left_sensor == 1)
+        console.log("left sensor : " + left_sensor);
+        console.log("right sensor : " + right_sensor);
+
+        if ((state == TrackingState.State_0) && (left_sensor == 0)
             && (right_sensor == 0)) {
             return true;
-        } else if ((state == TrackingState.State_2) && (left_sensor == 0)
+        } else if ((state == TrackingState.State_1) && (left_sensor == 0)
             && (right_sensor == 1)) {
             return true;
-        } else if ((state == TrackingState.State_3) && (left_sensor == 0)
+        } else if ((state == TrackingState.State_2) && (left_sensor == 1)
             && (right_sensor == 0)) {
+            return true;
+        } else if ((state == TrackingState.State_3) && (left_sensor == 1)
+            && (right_sensor == 1)) {
             return true;
         }
 
@@ -284,7 +288,7 @@ namespace Explorer_Lights {
     export function setAllBaseLightsColor(color: LightColors): void {
         neoStrip.setPixelColor(BaseLight.Front, color)
         neoStrip.setPixelColor(BaseLight.Left, color)
-        neoStrip.setPixelColor(BaseLight.Right,color)
+        neoStrip.setPixelColor(BaseLight.Right, color)
         neoStrip.show()
     }
 
@@ -315,6 +319,13 @@ namespace Explorer_Motion {
         backward
     }
 
+    export enum ClockDir {
+        //% block="clockwise"
+        cw,
+        //% block="counter clockwise"
+        ccw
+    }
+
     // run wheel at a given speed
     //% blockId=explorer_run_wheel block="run |%w| at speed |%speed| %dir"
     //% weight=10
@@ -322,15 +333,15 @@ namespace Explorer_Motion {
     //% advanced=true
     export function runWheel(w: Wheel, speed: number, dir: Direction): void {
         PCA9685_Drive.initPCA9685()
- 
+
         speed = speed * 40.96; // scaling 100 to 4096 
         if (speed > 4095) {
             speed = 4095
         }
-        
+
         if (w > 2 || w <= 0)
             return
-        
+
         let pp = (w - 1) * 2
         let pn = (w - 1) * 2 + 1
 
@@ -354,35 +365,91 @@ namespace Explorer_Motion {
     }
 
     // run forward at full speed
-    //% blockId=explorer_run_forward block="run forward at full speed"
+    //% blockId=explorer_run_forward_full_speed block="run forward at full speed"
     //% weight=10
-    export function runForward() : void {
+    export function runForwardAtFullSpeed(): void {
         runWheel(Wheel.left, 100, Direction.forward);
         runWheel(Wheel.right, 100, Direction.forward)
     }
 
-    // run backward at full speed
-    //% blockId=explorer_run_backward block="run backward at full speed"
+    // run forward at a specified speed
+    //% blockId=explorer_run_forward_specified_speed block="run forward at speed |%speed"
     //% weight=10
-    export function runBackward(): void {
+    //% speed.min=0 speed.max=100
+    //% advanced=true
+    export function runForwardAtSpecifiedSpeed(speed: number): void {
+        runWheel(Wheel.left, speed, Direction.forward);
+        runWheel(Wheel.right, speed, Direction.forward)
+    }
+
+    // run backward at full speed
+    //% blockId=explorer_run_backward_full_speed block="run backward at full speed"
+    //% weight=10
+    export function runBackwardFullSpeed(): void {
         runWheel(Wheel.left, 100, Direction.backward);
         runWheel(Wheel.right, 100, Direction.backward)
     }
 
-    // turn left at full speed
-    //% blockId=explorer_turn_left block="turn left at full speed"
+    // run backward at a specified speed
+    //% blockId=explorer_run_backward_specified_speed block="run backward at speed |%speed"
     //% weight=10
-    export function turnLeft(): void {
-        runWheel(Wheel.left, 100, Direction.backward);
+    //% speed.min=0 speed.max=100
+    //% advanced=true
+    export function runBackwardAtSpecifiedSpeed(speed: number): void {
+        runWheel(Wheel.left, speed, Direction.backward);
+        runWheel(Wheel.right, speed, Direction.backward)
+    }
+
+    // turn left at full speed
+    //% blockId=explorer_turn_left_full_speed block="turn left at full speed"
+    //% weight=10
+    export function turnLeftFullSpeed(): void {
+        runWheel(Wheel.left, 0, Direction.backward);
+        runWheel(Wheel.right, 100, Direction.forward)
+    }
+
+    // turn left at specified speed
+    //% blockId=explorer_turn_left_specified_speed block="turn left at speed |%speed|"
+    //% weight=10
+    //% speed.min=0 speed.max=100
+    //% advanced=true
+    export function turnLeftAtSpecifiedSpeed(speed: number): void {
+        runWheel(Wheel.left, 0, Direction.backward);
         runWheel(Wheel.right, 100, Direction.forward)
     }
 
     // turn right at full speed
-    //% blockId=explorer_turn_right block="turn right at full speed"
+    //% blockId=explorer_turn_right_full_speed block="turn right at full speed"
     //% weight=10
-    export function turnRight(): void {
+    export function turnRightFullSpeed(): void {
         runWheel(Wheel.left, 100, Direction.forward);
-        runWheel(Wheel.right, 100, Direction.backward)
+        runWheel(Wheel.right, 0, Direction.backward)
+    }
+
+    // turn right at specified speed
+    //% blockId=explorer_turn_right_specified_speed block="turn right at speed |%speed|"
+    //% weight=10
+    //% speed.min=0 speed.max=100
+    //% advanced=true
+    export function turnRightAtSpecifiedSpeed(speed: number): void {
+        runWheel(Wheel.left, speed, Direction.forward);
+        runWheel(Wheel.right, 0, Direction.backward)
+    }
+
+    // spin at a speed
+    //% blockId=explorer_spin_specified_speed block="spin |%dir| at speed |%speed|"
+    //% weight=10
+    //% speed.min=0 speed.max=100
+    //% advanced=true
+    export function spin(speed: number, dir: ClockDir): void {
+        if (dir == ClockDir.cw) {
+            runWheel(Wheel.left, speed, Direction.forward);
+            runWheel(Wheel.right, speed, Direction.backward)
+        }
+        else {
+            runWheel(Wheel.left, speed, Direction.backward);
+            runWheel(Wheel.right, speed, Direction.forward)
+        }
     }
 
     // brake car
