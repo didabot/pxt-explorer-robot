@@ -1,6 +1,6 @@
 {
     "name": "explorer",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "MakeCode Extension Explorer Robot Start Kit",
     "license": "MIT",
     "dependencies": {
