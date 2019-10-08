@@ -4,8 +4,7 @@
     "description": "MakeCode Extension Explorer Robot Start Kit",
     "license": "MIT",
     "dependencies": {
-        "core": "*",
-        "neopixel": "github:microsoft/pxt-neopixel#v0.6.12"
+        "core": "*"
     },
     "files": [
         "shims.d.ts",
@@ -17,15 +16,15 @@
         "RemoteIR.h",
         "TransmitterIR.cpp",
         "TransmitterIR.h",
-		"ws2812b.asm",
-		"ws2812b.ts",
-		"neopixel.ts",
+        "ws2812b.asm",
+        "ws2812b.ts",
+        "neopixel.ts",
         "_locales/zh/explorer-strings.json"
     ],
     "testFiles": [
         "tests.ts"
     ],
     "public": true,
-    "installedVersion": "workspace:95525553-27be-485f-6d20-1b7ffb080061",
+    "installedVersion": "workspace:0a7966bf-cc2b-4a3a-a206-1ffe7532fc4f",
     "preferredEditor": "tsprj"
 }
