@@ -2,7 +2,7 @@
 
 
 
-    //% color=#0fbc11 weight=10 
+    //% color=#5b78fa weight=10 
     //% icon="\uf1eb"
 declare namespace Explorer_IR {
 

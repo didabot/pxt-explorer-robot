@@ -179,7 +179,7 @@ namespace Explorer_Sensor {
     }
 }
 
-//% color=#0fbc11 weight=10 icon="\uf110"
+//% color=#5b78fa weight=10 icon="\uf110"
 namespace Explorer_Lights {
     let neoStrip: neopixel.Strip = neopixel.create(DigitalPin.P1, 3, NeoPixelMode.RGB)
     export enum BaseLight {
@@ -304,7 +304,7 @@ namespace Explorer_Lights {
     }
 }
 
-//% color=#0fbc11 weight=10 icon="\uf207"
+//% color=#5b78fa weight=10 icon="\uf207"
 namespace Explorer_Motion {
     export enum Wheel {
         //% block="right wheel"
