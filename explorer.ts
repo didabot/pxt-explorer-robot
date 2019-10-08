@@ -460,10 +460,5 @@ namespace Explorer_Motion {
         runWheel(Wheel.left, Direction.forward, 0);
         runWheel(Wheel.right, Direction.forward, 0)
     }
-
-    //% advanced=true 
-    //% shim=Explorer_IR::onPressEvent
-    function onPressEvent(btn: RemoteButton, body: Action): void {
-        return
-    }
 }
+

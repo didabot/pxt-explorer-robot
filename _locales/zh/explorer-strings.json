@@ -1,6 +1,6 @@
 {
     "{id:category}Explorer_IR": "探索者-遥控",
-    "Explorer_IR.onPressEvent|block": "当遥控器按键|%btn|按下时",
+    "Explorer_IR.onPressEvent|block": "当遥控器按键|%btn|按下时",    
     "RemoteButton.Zero|block": "0",
     "RemoteButton.One|block": "1",
     "RemoteButton.Two|block": "2",
