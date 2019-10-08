@@ -19,6 +19,7 @@
         "TransmitterIR.h",
 		"ws2812b.asm",
 		"ws2812b.ts",
+		"neopixel.ts",
         "_locales/zh/explorer-strings.json"
     ],
     "testFiles": [
