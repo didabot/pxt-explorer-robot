@@ -17,6 +17,8 @@
         "RemoteIR.h",
         "TransmitterIR.cpp",
         "TransmitterIR.h",
+		"ws2812b.asm",
+		"ws2812b.ts",
         "_locales/zh/explorer-strings.json"
     ],
     "testFiles": [

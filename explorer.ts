@@ -81,7 +81,7 @@ namespace PCA9685_Drive {
     }
 }
 
-//% color=#0fbc11 weight=10 icon="\uf0ee"
+//% color=#5b78fa weight=10 icon="\uf0ee"
 namespace Explorer_Sensor {
     let ultraTrigPin = DigitalPin.P14
     let ultraEchoPin = DigitalPin.P15
