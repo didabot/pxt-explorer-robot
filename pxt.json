@@ -11,6 +11,12 @@
         "ws2812b.asm",
         "ws2812b.ts",
         "neopixel.ts",
+        "explorerIR.cpp",
+        "ReceiverIR.cpp",
+        "ReceiverIR.h",
+        "RemoteIR.h",
+        "TransmitterIR.cpp",
+        "TransmitterIR.h",
         "_locales/zh/explorer-strings.json"
     ],
     "testFiles": [
