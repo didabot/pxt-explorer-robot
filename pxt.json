@@ -1,5 +1,5 @@
 {
-    "name": "explorer",
+    "name": "explorer-robot",
     "version": "0.0.11",
     "description": "MakeCode extension for spacebot explorer robot kit",
     "license": "MIT",

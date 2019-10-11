@@ -134,5 +134,5 @@ MIT
 * for PXT/microbit
 
 ```package
-explorer=github:/ttrobotics/pxt-explorer
+explorer=github:/spacebot/pxt-explorer-robot
 ```
