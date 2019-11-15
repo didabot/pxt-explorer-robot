@@ -1,6 +1,6 @@
 {
     "name": "explorer",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "MakeCode extension for spacebot explorer robot kit",
     "license": "MIT",
     "dependencies": {
