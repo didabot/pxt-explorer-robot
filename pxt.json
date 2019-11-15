@@ -4,7 +4,8 @@
     "description": "MakeCode extension for spacebot explorer robot kit",
     "license": "MIT",
     "dependencies": {
-        "core": "*"
+        "core": "*",
+        "ir": "github:didabot/pxt-explorer-robot-ir#v1.0.0"
     },
     "files": [
         "explorer.ts",
