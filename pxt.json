@@ -1,18 +1,24 @@
 {
-    "name": "explorer",
+    "name": "modou",
     "version": "1.0.3",
-    "description": "MakeCode extension for spacebot explorer robot kit",
+    "description": "MakeCode extension for modou robot kit",
     "license": "MIT",
     "dependencies": {
-        "core": "*",
-        "ir": "github:didabot/pxt-explorer-robot-ir#v1.0.0"
+        "core": "*"
     },
     "files": [
-        "explorer.ts",
+        "enums.d.ts",
+        "modou.ts",
         "ws2812b.asm",
         "ws2812b.ts",
         "neopixel.ts",
-        "_locales/zh/explorer-strings.json"
+        "ir/explorerIR.cpp",
+        "ir/RemoteIR.h",
+        "ir/ReceiverIR.cpp",
+        "ir/ReceiverIR.h",
+        "ir/TransmitterIR.cpp",
+        "ir/TransmitterIR.h",
+        "_locales/zh/modou-strings.json"
     ],
     "testFiles": [
         "tests.ts"

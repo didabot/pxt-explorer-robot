@@ -48,7 +48,6 @@ namespace PCA9685_Drive {
         }
     }
 
-
     export function setFreq(freq: number): void {
         // Constrain the frequency
         let prescaleval = 25000000
@@ -81,8 +80,8 @@ namespace PCA9685_Drive {
     }
 }
 
-//% color=#5b78fa weight=10 icon="\uf0ee"
-namespace Explorer_Sensor {
+//% color=#009ede icon="\uf0ee"
+namespace Modou_Sensor {
     let ultraTrigPin = DigitalPin.P14
     let ultraEchoPin = DigitalPin.P15
     let leftLinePin = DigitalPin.P16
@@ -103,7 +102,7 @@ namespace Explorer_Sensor {
      * set ultrasonic sensor angle
      * @param degree [-80-80] degree of servo; eg: -80, 0, 80
     */
-    //% blockId=explorer_set_ultra_sensor_angle block="set ultrasonic sensor angle to |%angle| degree"
+    //% blockId=modou_set_ultra_sensor_angle block="set ultrasonic sensor angle to |%angle| degree"
     //% weight=100
     //% angle.min=-80 angle.max=80
     //% name.fieldEditor="gridpicker" name.fieldOptions.columns=4
@@ -121,7 +120,7 @@ namespace Explorer_Sensor {
     /**
 	 * get ultrasonic distance
 	*/
-    //% blockId=explorer_get_ultrasonic_distance block="ultrasonic distance (cm)"
+    //% blockId=modou_get_ultrasonic_distance block="ultrasonic distance (cm)"
     //% weight=10
     export function Ultrasonic(): number {
         // send pulse
@@ -150,7 +149,7 @@ namespace Explorer_Sensor {
     /**
      * get tracking state
      */
-    //% blockid=explorer_get_tracking_state 
+    //% blockid=modou_get_tracking_state 
     //% block="tracking state is %state"
     //% weight=10
     export function trackingState(state: TrackingState): boolean {
@@ -179,8 +178,8 @@ namespace Explorer_Sensor {
     }
 }
 
-//% color=#5b78fa weight=10 icon="\uf110"
-namespace Explorer_Lights {
+//% color=#009ede icon="\uf110"
+namespace Modou_Lights {
     let neoStrip: neopixel.Strip = neopixel.create(DigitalPin.P1, 3, NeoPixelMode.RGB)
     export enum BaseLight {
         //%block=Front
@@ -226,11 +225,10 @@ namespace Explorer_Lights {
     }
 
     // set car light brightness
-    //% blockId=explorer_set_car_light_brightness 
+    //% blockId=modou_set_car_light_brightness 
     //% block="set |%light| light brightness to |%level"
     //% weight=10
     //% level.min=0 level.max=100
-    //% advanced=true
     export function SetCarLightBrightness(light: CarLight, level: number): void {
         PCA9685_Drive.initPCA9685()
         level = level * 40; // map 100 to 4096
@@ -241,10 +239,9 @@ namespace Explorer_Lights {
     }
 
     // set all car lights brightness
-    //% blockId=explorer_set_all_car_lights_brightness block="set all car lights brightness to %level"
+    //% blockId=modou_set_all_car_lights_brightness block="set all car lights brightness to %level"
     //% weight=10
     //% level.min=0 level.max=100
-    //% advanced=true
     export function SetAllCarLightsBrightness(level: number): void {
         SetCarLightBrightness(CarLight.HeadLeft, level)
         SetCarLightBrightness(CarLight.HeadRight, level)
@@ -253,17 +250,15 @@ namespace Explorer_Lights {
     }
 
     // turn off car light
-    //% blockId=explorer_turn_off_car_light block="turn |%light| light off"
+    //% blockId=modou_turn_off_car_light block="turn |%light| light off"
     //% weight=10
-    //% advanced=true
     export function TurnCarLightOff(light: CarLight): void {
         SetCarLightBrightness(light, 0);
     }
 
     // turn all car lights off
-    //% blockId=explorer_turn_all_car_lights_off block="turn all car lights off"
+    //% blockId=modou_turn_all_car_lights_off block="turn all car lights off"
     //% weight=10
-    //% advanced=true
     export function TurnAllCarLightsOff(): void {
         TurnCarLightOff(CarLight.HeadLeft);
         TurnCarLightOff(CarLight.HeadRight);
@@ -274,7 +269,7 @@ namespace Explorer_Lights {
     /**
      * set base light to a given color. 
     */
-    //% blockId="explorer_set_base_light_color" block="set |%led| base light to |%color"
+    //% blockId="modou_set_base_light_color" block="set |%led| base light to |%color"
     //% weight=10
     export function setBaseLightColor(light: BaseLight, color: LightColors): void {
         neoStrip.setPixelColor(light, color)
@@ -284,7 +279,7 @@ namespace Explorer_Lights {
     /**
      * set all base lights to a given color. 
     */
-    //% blockId="explorer_set_all_base_lights_color" block="set all base lights to %color"
+    //% blockId="modou_set_all_base_lights_color" block="set all base lights to %color"
     //% weight=10
     export function setAllBaseLightsColor(color: LightColors): void {
         neoStrip.setPixelColor(BaseLight.Front, color)
@@ -296,7 +291,7 @@ namespace Explorer_Lights {
     /**
      * clear all base lights. 
     */
-    //% blockId=explorer_clear_all_base_lights block="clear all base lights"
+    //% blockId=modou_clear_all_base_lights block="clear all base lights"
     //% weight=10
     export function ClearAllBaseLights(): void {
         neoStrip.clear()
@@ -304,8 +299,8 @@ namespace Explorer_Lights {
     }
 }
 
-//% color=#5b78fa weight=10 icon="\uf207"
-namespace Explorer_Motion {
+//% color=#009ede icon="\uf207"
+namespace Modou_Motion {
     export enum Wheel {
         //% block="right wheel"
         right = 0x1,
@@ -328,10 +323,9 @@ namespace Explorer_Motion {
     }
 
     // run wheel at a given speed
-    //% blockId=explorer_run_wheel block="run |%w| at speed |%speed| %dir"
-    //% weight=10
+    //% blockId=modou_run_wheel block="run |%w| at speed |%speed| %dir" blockGap=8
+    //% weight=50
     //% speed.min=0 speed.max=100
-    //% advanced=true
     export function runWheel(w: Wheel, speed: number, dir: Direction): void {
         PCA9685_Drive.initPCA9685()
 
@@ -365,83 +359,46 @@ namespace Explorer_Motion {
         }
     }
 
-    // run forward at full speed
-    //% blockId=explorer_run_forward_full_speed block="run forward at full speed"
-    //% weight=10
-    export function runForwardAtFullSpeed(): void {
-        runWheel(Wheel.left, 100, Direction.forward);
-        runWheel(Wheel.right, 100, Direction.forward)
-    }
-
     // run forward at a specified speed
-    //% blockId=explorer_run_forward_specified_speed block="run forward at speed |%speed"
-    //% weight=10
+    //% blockId=modou_run_forward_specified_speed block="run forward at speed |%speed" blockGap=8
+    //% weight=90
     //% speed.min=0 speed.max=100
-    //% advanced=true
     export function runForwardAtSpecifiedSpeed(speed: number): void {
         runWheel(Wheel.left, speed, Direction.forward);
         runWheel(Wheel.right, speed, Direction.forward)
     }
 
-    // run backward at full speed
-    //% blockId=explorer_run_backward_full_speed block="run backward at full speed"
-    //% weight=10
-    export function runBackwardFullSpeed(): void {
-        runWheel(Wheel.left, 100, Direction.backward);
-        runWheel(Wheel.right, 100, Direction.backward)
-    }
-
     // run backward at a specified speed
-    //% blockId=explorer_run_backward_specified_speed block="run backward at speed |%speed"
-    //% weight=10
+    //% blockId=modou_run_backward_specified_speed block="run backward at speed |%speed" blockGap=8
+    //% weight=80
     //% speed.min=0 speed.max=100
-    //% advanced=true
     export function runBackwardAtSpecifiedSpeed(speed: number): void {
         runWheel(Wheel.left, speed, Direction.backward);
         runWheel(Wheel.right, speed, Direction.backward)
     }
 
-    // turn left at full speed
-    //% blockId=explorer_turn_left_full_speed block="turn left at full speed"
-    //% weight=10
-    export function turnLeftFullSpeed(): void {
-        runWheel(Wheel.left, 0, Direction.backward);
-        runWheel(Wheel.right, 100, Direction.forward)
-    }
-
     // turn left at specified speed
-    //% blockId=explorer_turn_left_specified_speed block="turn left at speed |%speed|"
-    //% weight=10
+    //% blockId=modou_turn_left_specified_speed block="turn left at speed |%speed|" blockGap=8
+    //% weight=70
     //% speed.min=0 speed.max=100
-    //% advanced=true
     export function turnLeftAtSpecifiedSpeed(speed: number): void {
         runWheel(Wheel.left, 0, Direction.backward);
         runWheel(Wheel.right, 100, Direction.forward)
     }
 
-    // turn right at full speed
-    //% blockId=explorer_turn_right_full_speed block="turn right at full speed"
-    //% weight=10
-    export function turnRightFullSpeed(): void {
-        runWheel(Wheel.left, 100, Direction.forward);
-        runWheel(Wheel.right, 0, Direction.backward)
-    }
-
     // turn right at specified speed
-    //% blockId=explorer_turn_right_specified_speed block="turn right at speed |%speed|"
-    //% weight=10
+    //% blockId=modou_turn_right_specified_speed block="turn right at speed |%speed|" blockGap=8
+    //% weight=60
     //% speed.min=0 speed.max=100
-    //% advanced=true
     export function turnRightAtSpecifiedSpeed(speed: number): void {
         runWheel(Wheel.left, speed, Direction.forward);
         runWheel(Wheel.right, 0, Direction.backward)
     }
 
     // spin at a speed
-    //% blockId=explorer_spin_specified_speed block="spin |%dir| at speed |%speed|"
-    //% weight=10
+    //% blockId=modou_spin_specified_speed block="spin |%dir| at speed |%speed|" blockGap=8
+    //% weight=50
     //% speed.min=0 speed.max=100
-    //% advanced=true
     export function spin(speed: number, dir: ClockDir): void {
         if (dir == ClockDir.cw) {
             runWheel(Wheel.left, speed, Direction.forward);
@@ -452,13 +409,23 @@ namespace Explorer_Motion {
             runWheel(Wheel.right, speed, Direction.forward)
         }
     }
-
-    // brake car
-    //% blockId=explorer_brake_car block="brake car"
-    //% weight=10
-    export function brake(): void {
-        runWheel(Wheel.left, Direction.forward, 0);
-        runWheel(Wheel.right, Direction.forward, 0)
-    }
 }
 
+//% color=#009ede icon="\uf110"
+namespace Modou_IR_T {
+  
+    //% advanced=true shim=modou_IR::onPressEvent
+    function onPressEvent(btn: RemoteButton, body: Action): void {
+        return
+    }
+
+  /**
+  * set button pressed event handler.
+  */
+  //% blockId=modou_ir_button_pressed_event_user
+  //% block="on button |%btn| pressed"
+  export function onPressEventUser(btn:RemoteButton, body:Action ): void { 
+      onPressEvent(btn, body);       
+  }
+    
+}

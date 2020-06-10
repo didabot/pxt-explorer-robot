@@ -1,0 +1,19 @@
+{
+    "target": "microbit",
+    "targetVersion": "2.1.15",
+    "name": "explorer",
+    "meta": {},
+    "editor": "tsprj",
+    "pubId": "",
+    "pubCurrent": false,
+    "_rev": null,
+    "id": "f779fa04-38f9-46d1-ac75-ea2d30446e7e",
+    "recentUse": 1573811593,
+    "modificationTime": 1573811109,
+    "blobId": null,
+    "blobVersion": null,
+    "blobCurrent": false,
+    "isDeleted": false,
+    "path": "pxt-explorer-robot",
+    "githubCurrent": false
+}
