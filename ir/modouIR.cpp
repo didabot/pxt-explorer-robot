@@ -66,6 +66,7 @@ enum class RemoteButton
   Ok = 28
 };
 
+//% color=#009ede icon="\uf110"
 namespace Modou_IR { 
   map<RemoteButton, vA> actions;
   map<RemoteButton, uint32_t> lastact;
@@ -107,8 +108,13 @@ namespace Modou_IR {
     rx = new ReceiverIR((PinName)pin);
     tsb.start(); //interrupt timer for debounce
     create_fiber(monitorIR);
-  }  
+  }
 
+  /**
+  * set button pressed event handler.
+  */
+  //% blockId=modou_ir_button_pressed_event
+  //% block="on button |%btn| pressed"
   void onPressEvent(RemoteButton btn, Action body) {
     static bool inited = false;
     if (!inited) {

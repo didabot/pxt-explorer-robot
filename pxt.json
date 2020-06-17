@@ -12,18 +12,19 @@
         "ws2812b.asm",
         "ws2812b.ts",
         "neopixel.ts",
-        "ir/explorerIR.cpp",
+        "ir/modouIR.cpp",
         "ir/RemoteIR.h",
         "ir/ReceiverIR.cpp",
         "ir/ReceiverIR.h",
         "ir/TransmitterIR.cpp",
         "ir/TransmitterIR.h",
-        "_locales/zh/modou-strings.json"
+        "_locales/zh/modou-strings.json",
+        "shims.d.ts"
     ],
     "testFiles": [
         "tests.ts"
     ],
     "public": true,
-    "installedVersion": "workspace:7c035382-0e98-4081-cc94-fd915880c822",
-    "preferredEditor": "tsprj"
+    "preferredEditor": "tsprj",
+    "installedVersion": "workspace:7c035382-0e98-4081-cc94-fd915880c822"
 }

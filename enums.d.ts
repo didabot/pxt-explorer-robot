@@ -61,5 +61,7 @@
     //% block=Ok
     Ok = 28,
     }
+declare namespace Modou_IR {
+}
 
 // Auto-generated. Do not edit. Really.

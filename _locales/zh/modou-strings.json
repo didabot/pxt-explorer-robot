@@ -44,8 +44,8 @@
     "Modou_Motion.turnLeftAtSpecifiedSpeed|block": "以速度|%speed|左转",
     "Modou_Motion.turnRightAtSpecifiedSpeed|block": "以速度|%speed|右转",
     "Modou_Motion.spin|block": "以速度|%speed|%dir|旋转",
-    "Modou_IR_T.onPressEventUser|block": "当按键 |%btn| 被按下时",
-    "Modou_IR_T|block": "墨豆-遥控",
+    "Modou_IR.onPressEvent|block": "当按键 |%btn| 被按下时",
+    "Modou_IR|block": "墨豆-遥控",
     "RemoteButton.Asterisk|block": "*",
     "RemoteButton.Down|block": "下",
     "RemoteButton.Eight|block": "8",
@@ -63,5 +63,5 @@
     "RemoteButton.Two|block": "2",
     "RemoteButton.Up|block": "上",
     "RemoteButton.Zero|block": "0",
-    "{id:category}Modou_IR_T": "墨豆-遥控"
+    "{id:category}Modou_IR": "墨豆-遥控"
   }
