@@ -383,7 +383,7 @@ namespace Modou_Motion {
     //% speed.min=0 speed.max=100
     export function turnLeftAtSpecifiedSpeed(speed: number): void {
         runWheel(Wheel.left, 0, Direction.backward);
-        runWheel(Wheel.right, 100, Direction.forward)
+        runWheel(Wheel.right, speed, Direction.forward)
     }
 
     // turn right at specified speed
@@ -395,9 +395,17 @@ namespace Modou_Motion {
         runWheel(Wheel.right, 0, Direction.backward)
     }
 
+    // brake and stop move
+    //% blockId=modou_brake block="brake" blockGap=8
+    //% weight=50
+    export function brake(): void {
+        runWheel(Wheel.left, 0, Direction.forward);
+        runWheel(Wheel.right, 0, Direction.forward)
+    }
+
     // spin at a speed
     //% blockId=modou_spin_specified_speed block="spin |%dir| at speed |%speed|" blockGap=8
-    //% weight=50
+    //% weight=40
     //% speed.min=0 speed.max=100
     export function spin(speed: number, dir: ClockDir): void {
         if (dir == ClockDir.cw) {

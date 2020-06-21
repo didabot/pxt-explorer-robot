@@ -38,10 +38,10 @@
     "Modou_Motion.ClockDir.cw|block": "顺时针",
     "Modou_Motion.ClockDir.ccw|block": "逆时针",    
     "Modou_Motion.runWheel|block": "设置|%w|以速度|%speed|%dir|运行",
-    "Modou_Motion.brake|block": "刹车",
     "Modou_Motion.runForwardAtSpecifiedSpeed|block": "以速度|%speed|前进",
     "Modou_Motion.runBackwardAtSpecifiedSpeed|block": "以速度|%speed|后退",
     "Modou_Motion.turnLeftAtSpecifiedSpeed|block": "以速度|%speed|左转",
     "Modou_Motion.turnRightAtSpecifiedSpeed|block": "以速度|%speed|右转",
+    "Modou_Motion.brake|block": "刹车",
     "Modou_Motion.spin|block": "以速度|%speed|%dir|旋转"
   }
