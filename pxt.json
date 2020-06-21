@@ -7,19 +7,11 @@
         "core": "*"
     },
     "files": [
-        "enums.d.ts",
         "modou.ts",
         "ws2812b.asm",
         "ws2812b.ts",
         "neopixel.ts",
-        "ir/modouIR.cpp",
-        "ir/RemoteIR.h",
-        "ir/ReceiverIR.cpp",
-        "ir/ReceiverIR.h",
-        "ir/TransmitterIR.cpp",
-        "ir/TransmitterIR.h",
-        "_locales/zh/modou-strings.json",
-        "shims.d.ts"
+        "_locales/zh/modou-strings.json"
     ],
     "testFiles": [
         "tests.ts"
